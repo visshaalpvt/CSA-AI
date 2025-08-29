@@ -1,0 +1,17 @@
+% Graph with heuristic
+edge(a,b,2). edge(a,c,1).
+edge(b,d,5). edge(c,d,3).
+
+heuristic(a,5). heuristic(b,2).
+heuristic(c,1). heuristic(d,0).
+
+bestfs(Node,Goal,Path) :- bfs([[Node]],Goal,Path).
+
+bfs([[Goal|Path]|_],Goal,[Goal|Path]).
+bfs([ [Node|Path] | Rest], Goal, Sol) :-
+    findall([Next,Node|Path],
+            (edge(Node,Next,_), \+ member(Next,[Node|Path])),
+            NewPaths),
+    sort(2,@=<,NewPaths,Sorted), % sort by heuristic
+    append(Sorted,Rest,Queue),
+    bfs(Queue,Goal,Sol).
