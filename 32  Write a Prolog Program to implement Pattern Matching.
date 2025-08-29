@@ -1,0 +1,3 @@
+% match(List, Pattern)
+match([H|_], H).               % Head matches
+match([_|T], X) :- match(T,X). % Search in Tail
