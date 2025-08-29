@@ -1,0 +1,4 @@
+% Facts: name(Name, DOB).
+person('Alice', '01-01-2000').
+person('Bob',   '15-03-1999').
+person('Charlie','20-07-2001').
