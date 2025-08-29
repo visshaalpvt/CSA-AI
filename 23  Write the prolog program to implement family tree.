@@ -1,0 +1,16 @@
+% Facts
+parent(john, mary).
+parent(john, tom).
+parent(susan, mary).
+parent(susan, tom).
+parent(mary, anna).
+parent(mike, anna).
+
+male(john). male(tom). male(mike).
+female(susan). female(mary). female(anna).
+
+% Rules
+father(X,Y) :- parent(X,Y), male(X).
+mother(X,Y) :- parent(X,Y), female(X).
+grandparent(X,Y) :- parent(X,Z), parent(Z,Y).
+sibling(X,Y) :- parent(Z,X), parent(Z,Y), X \= Y.
