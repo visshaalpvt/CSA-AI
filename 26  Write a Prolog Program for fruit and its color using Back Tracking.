@@ -1,0 +1,7 @@
+fruit(apple, red).
+fruit(banana, yellow).
+fruit(grape, purple).
+fruit(orange, orange).
+fruit(guava, green).
+
+% Query will backtrack to give all possibilities
