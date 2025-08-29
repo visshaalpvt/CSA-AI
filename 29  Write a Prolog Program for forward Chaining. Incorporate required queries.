@@ -1,0 +1,8 @@
+fact(rain).
+fact(cloudy).
+
+rule([rain], wet).
+rule([cloudy], humid).
+
+forward :- fact(X), rule([X], Y), \+ fact(Y), assert(fact(Y)), write('Derived: '), write(Y), nl, forward.
+forward.
