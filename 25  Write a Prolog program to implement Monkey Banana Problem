@@ -1,0 +1,12 @@
+% State: state(MonkeyPosition, MonkeyOnBox, BoxPosition, HasBanana)
+
+move(state(middle, onbox, middle, hasnot), grab, state(middle, onbox, middle, has)).
+
+move(state(P, floor, P, H), climb, state(P, onbox, P, H)).
+move(state(P1, floor, P1, H), push(P1,P2), state(P2, floor, P2, H)).
+move(state(P1, floor, B, H), walk(P1,P2), state(P2, floor, B, H)).
+
+goal(state(_, _, _, has)).
+
+solve(S) :- goal(S).
+solve(S) :- move(S, _, S1), solve(S1).
