@@ -1,0 +1,45 @@
+
+from collections import deque
+
+# Water Jug Problem using BFS
+def water_jug(cap_x, cap_y, target):
+    visited = set()
+    q = deque()
+
+    # initial state (0,0)
+    q.append((0, 0))
+    visited.add((0, 0))
+
+    while q:
+        x, y = q.popleft()
+        print(f"({x}, {y})")
+
+        if x == target or y == target:
+            print("\nReached target!")
+            return True
+
+        # All possible next states
+        next_states = [
+            (cap_x, y),  # fill jug X
+            (x, cap_y),  # fill jug Y
+            (0, y),      # empty jug X
+            (x, 0),      # empty jug Y
+            # pour X -> Y
+            (x - min(x, cap_y - y), y + min(x, cap_y - y)),
+            # pour Y -> X
+            (x + min(y, cap_x - x), y - min(y, cap_x - x))
+        ]
+
+        for state in next_states:
+            if state not in visited:
+                visited.add(state)
+                q.append(state)
+
+    print("No solution possible.")
+    return False
+
+
+# Example usage
+if __name__ == "__main__":
+    cap_x, cap_y, target = 4, 3, 2   # Example: 4L jug, 3L jug, target=2L
+    water_jug(cap_x, cap_y, target)
