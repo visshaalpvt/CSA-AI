@@ -1,0 +1,55 @@
+class Environment:
+    def __init__(self, location_A="Dirty", location_B="Dirty"):
+        self.location_A = location_A
+        self.location_B = location_B
+        self.vacuum_location = 'A'  # Vacuum starts at location A
+        self.performance_score = 0
+
+    def is_clean(self):
+        return self.location_A == "Clean" and self.location_B == "Clean"
+
+    def display_status(self):
+        print(f"Location A: {self.location_A}")
+        print(f"Location B: {self.location_B}")
+        print(f"Vacuum Location: {self.vacuum_location}")
+        print(f"Performance Score: {self.performance_score}")
+        print("-" * 30)
+
+
+class VacuumAgent:
+    def __init__(self, environment):
+        self.env = environment
+
+    def run(self):
+        while not self.env.is_clean():
+            self.env.display_status()
+
+            if self.env.vacuum_location == 'A':
+                if self.env.location_A == "Dirty":
+                    print("Sucking dirt at A.")
+                    self.env.location_A = "Clean"
+                    self.env.performance_score += 10
+                else:
+                    print("Moving to B.")
+                    self.env.vacuum_location = 'B'
+                    self.env.performance_score -= 1  # cost for movement
+
+            elif self.env.vacuum_location == 'B':
+                if self.env.location_B == "Dirty":
+                    print("Sucking dirt at B.")
+                    self.env.location_B = "Clean"
+                    self.env.performance_score += 10
+                else:
+                    print("Moving to A.")
+                    self.env.vacuum_location = 'A'
+                    self.env.performance_score -= 1  # cost for movement
+
+        self.env.display_status()
+        print("All rooms are clean!")
+
+
+# Run the program
+if __name__ == "__main__":
+    env = Environment(location_A="Dirty", location_B="Dirty")
+    agent = VacuumAgent(env)
+    agent.run()
