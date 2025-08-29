@@ -1,0 +1,9 @@
+symptom(fever, flu).
+symptom(cough, flu).
+symptom(sneezing, cold).
+symptom(runny_nose, cold).
+symptom(chest_pain, asthma).
+
+diagnose(S) :- 
+    symptom(S, Disease),
+    write('Possible disease: '), write(Disease), nl.
