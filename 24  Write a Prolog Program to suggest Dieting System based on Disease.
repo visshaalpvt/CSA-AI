@@ -1,0 +1,13 @@
+
+% Facts: diet(Disease, SuggestedDiet).
+diet(diabetes, 'Avoid sugar, eat whole grains, vegetables, and lean protein.').
+diet(hypertension, 'Low salt, more fruits, vegetables, and avoid oily food.').
+diet(obesity, 'Low calorie, high fiber diet with regular exercise.').
+diet(anemia, 'Iron-rich foods like spinach, beetroot, and lean meat.').
+diet(heart_disease, 'Low fat, high fiber, omega-3 rich foods.').
+
+% Rule
+suggest_diet(Disease) :- 
+    diet(Disease, Advice),
+    write('For '), write(Disease), write(': '), nl,
+    write(Advice), nl.
