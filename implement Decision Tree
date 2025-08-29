@@ -1,0 +1,25 @@
+# Decision Tree Classifier using scikit-learn
+
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier, export_text
+
+# Load dataset (Iris dataset)
+iris = load_iris()
+X = iris.data   # features
+y = iris.target # labels
+
+# Split dataset (80% train, 20% test)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Create Decision Tree
+clf = DecisionTreeClassifier(criterion="entropy", max_depth=3)
+clf.fit(X_train, y_train)
+
+# Print tree structure
+print("Decision Tree rules:\n")
+print(export_text(clf, feature_names=iris.feature_names))
+
+# Test accuracy
+accuracy = clf.score(X_test, y_test)
+print("\nAccuracy:", accuracy)
