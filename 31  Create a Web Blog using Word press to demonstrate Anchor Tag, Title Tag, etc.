@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My First WordPress Blog</title>
+</head>
+<body>
+  <h1>Welcome to My Blog</h1>
+  <p>This is an example of using <b>basic HTML tags</b> inside WordPress.</p>
+  
+  <!-- Anchor Tag -->
+  <a href="https://www.wordpress.org" target="_blank" title="Go to WordPress">Visit WordPress</a>
+
+  <h2>Subheading Example</h2>
+  <p>You can also use <i>italic</i>, <u>underline</u>, and <strong>bold</strong> text here.</p>
+</body>
+</html>
