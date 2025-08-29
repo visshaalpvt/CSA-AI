@@ -1,0 +1,9 @@
+% Facts: planet(Name, DistanceFromSun, Moons).
+planet('Mercury', 58, 0).
+planet('Venus', 108, 0).
+planet('Earth', 150, 1).
+planet('Mars', 228, 2).
+planet('Jupiter', 778, 79).
+planet('Saturn', 1427, 82).
+planet('Uranus', 2871, 27).
+planet('Neptune', 4495, 14).
