@@ -1,0 +1,46 @@
+# Recursive DFS
+def dfs_recursive(graph, node, visited=None):
+    if visited is None:
+        visited = set()
+    
+    visited.add(node)
+    print(node, end=' ')
+    
+    for neighbor in graph[node]:
+        if neighbor not in visited:
+            dfs_recursive(graph, neighbor, visited)
+
+
+# Iterative DFS
+def dfs_iterative(graph, start_node):
+    visited = set()
+    stack = [start_node]
+
+    print("DFS Iterative Traversal:")
+    while stack:
+        current = stack.pop()
+        if current not in visited:
+            print(current, end=' ')
+            visited.add(current)
+            # Add neighbors in reverse to maintain order
+            for neighbor in reversed(graph[current]):
+                if neighbor not in visited:
+                    stack.append(neighbor)
+
+
+# Example Graph
+graph = {
+    'A': ['B', 'C'],
+    'B': ['D', 'E'],
+    'C': ['F'],
+    'D': [],
+    'E': ['F'],
+    'F': []
+}
+
+# Run DFS
+print("DFS Recursive Traversal:")
+dfs_recursive(graph, 'A')
+
+print("\n")
+dfs_iterative(graph, 'A')
