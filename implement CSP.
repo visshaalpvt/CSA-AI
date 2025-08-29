@@ -1,0 +1,149 @@
+# Map Coloring CSP — Backtracking + MRV + Degree + LCV + Forward Checking (+ optional AC-3)
+
+from collections import defaultdict, deque
+from copy import deepcopy
+
+class CSP:
+    def __init__(self, variables, domains, neighbors, constraint):
+        self.variables = variables              # list of variable names
+        self.domains = domains                  # dict: var -> list of values
+        self.neighbors = neighbors              # dict: var -> list of neighboring vars
+        self.constraint = constraint            # function(x, vx, y, vy) -> bool
+
+        # For stats/debugging
+        self.n_assigns = 0
+        self.n_backtracks = 0
+
+    # ---------- Inference helpers ----------
+    def ac3(self, assignment):
+        """AC-3: Enforce arc consistency (optional but helpful).
+        Returns True if arc-consistent; False if inconsistency found."""
+        queue = deque([(xi, xj) for xi in self.variables for xj in self.neighbors[xi]])
+        while queue:
+            xi, xj = queue.popleft()
+            if self.revise(xi, xj, assignment):
+                if len(self.domains[xi]) == 0:
+                    return False
+                for xk in self.neighbors[xi]:
+                    if xk != xj:
+                        queue.append((xk, xi))
+        return True
+
+    def revise(self, xi, xj, assignment):
+        """Revise domain of xi relative to xj."""
+        revised = False
+        to_remove = []
+        for vx in self.domains[xi]:
+            # Keep vx if there exists some vy in D(xj) that satisfies the constraint
+            if not any(self.constraint(xi, vx, xj, vy)
+                       for vy in self.domains[xj]
+                       if vy is not None):
+                to_remove.append(vx)
+        if to_remove:
+            for v in to_remove:
+                self.domains[xi].remove(v)
+            revised = True
+        return revised
+
+    def forward_check(self, var, value, assignment, local_domains):
+        """Prune neighbors' domains after assigning var=value. Return False if any domain wipes out."""
+        for n in self.neighbors[var]:
+            if n not in assignment:  # only unassigned
+                pruned = []
+                for v in local_domains[n]:
+                    if not self.constraint(var, value, n, v):
+                        pruned.append(v)
+                if pruned:
+                    for v in pruned:
+                        local_domains[n].remove(v)
+                    if len(local_domains[n]) == 0:
+                        return False
+        return True
+
+    # ---------- Heuristics ----------
+    def select_unassigned_variable(self, assignment):
+        """MRV (fewest legal values), break ties with Degree heuristic (most constraints on others)."""
+        unassigned = [v for v in self.variables if v not in assignment]
+        # MRV: fewest remaining values
+        mrv = min(len(self.domains[v]) for v in unassigned)
+        candidates = [v for v in unassigned if len(self.domains[v]) == mrv]
+        if len(candidates) == 1:
+            return candidates[0]
+        # Degree heuristic tie-breaker: most neighbors unassigned
+        return max(candidates, key=lambda v: sum(1 for n in self.neighbors[v] if n not in assignment))
+
+    def order_domain_values(self, var, assignment):
+        """LCV: values that eliminate the fewest options for neighbors first."""
+        def conflicts(value):
+            count = 0
+            for n in self.neighbors[var]:
+                if n not in assignment:
+                    count += sum(1 for v in self.domains[n] if not self.constraint(var, value, n, v))
+            return count
+        return sorted(self.domains[var], key=conflicts)
+
+    # ---------- Backtracking search ----------
+    def backtracking_search(self, use_ac3=False):
+        # Optionally run AC-3 once at the start
+        if use_ac3:
+            original_domains = deepcopy(self.domains)
+            if not self.ac3(assignment={}):
+                self.domains = original_domains
+                return None
+
+        return self._backtrack({}, deepcopy(self.domains))
+
+    def _backtrack(self, assignment, current_domains):
+        # Goal test: all assigned
+        if len(assignment) == len(self.variables):
+            return assignment
+
+        var = self.select_unassigned_variable(assignment)
+        for value in self.order_domain_values(var, assignment):
+            if self.is_consistent(var, value, assignment):
+                # Tentatively assign
+                assignment[var] = value
+                self.n_assigns += 1
+
+                # Keep a local copy of domains for this branch
+                local_domains = deepcopy(current_domains)
+                local_domains[var] = [value]  # var fixed
+
+                # Forward checking
+                if self.forward_check(var, value, assignment, local_domains):
+                    result = self._backtrack(assignment, local_domains)
+                    if result is not None:
+                        return result
+
+                # Backtrack
+                self.n_backtracks += 1
+                del assignment[var]
+
+        return None
+
+    def is_consistent(self, var, value, assignment):
+        """Check against assigned neighbors only."""
+        for n in self.neighbors[var]:
+            if n in assignment and not self.constraint(var, value, n, assignment[n]):
+                return False
+        return True
+
+
+# ---------- Problem definition: Australia map ----------
+def australia_csp():
+    variables = ["WA", "NT", "SA", "Q", "NSW", "V", "T"]
+    colors = ["Red", "Green", "Blue", "Yellow"]  # 3 is enough for Australia; 4 gives more options
+    domains = {v: colors[:] for v in variables}
+
+    neighbors = {
+        "WA":  ["NT", "SA"],
+        "NT":  ["WA", "SA", "Q"],
+        "SA":  ["WA", "NT", "Q", "NSW", "V"],
+        "Q":   ["NT", "SA", "NSW"],
+        "NSW": ["Q", "SA", "V"],
+        "V":   ["SA", "NSW"],
+        "T":   []  # Tasmania
+    }
+
+    def diff_colors(x, vx, y, vy):
+        # Adjacent regions must have differe
