@@ -1,0 +1,8 @@
+fact(rain).
+fact(cloudy).
+
+rule(wet, rain).
+rule(humid, cloudy).
+
+prove(X) :- fact(X).
+prove(X) :- rule(X,Y), prove(Y).
