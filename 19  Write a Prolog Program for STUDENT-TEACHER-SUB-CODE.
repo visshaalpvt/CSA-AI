@@ -1,0 +1,4 @@
+% Facts: student_teacher(Student, Teacher, Subject, Code).
+student_teacher('Alice', 'Dr. Smith', 'Math', 'M101').
+student_teacher('Bob',   'Dr. John',  'Physics', 'P202').
+student_teacher('Charlie','Dr. Smith','Math', 'M101').
